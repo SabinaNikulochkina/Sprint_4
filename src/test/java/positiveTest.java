@@ -1,3 +1,6 @@
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.After;
+import org.junit.Before;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.junit.Test;
@@ -29,6 +32,12 @@ public class positiveTest {
     }
     private WebDriver driver;
 
+    @Before
+    public void setUp() {
+        /*WebDriverManager.chromedriver().setup();*/
+        driver = new ChromeDriver();
+    }
+
     @Parameterized.Parameters
     public static Object[][] getCredentials() {
         return new Object[][]{
@@ -38,7 +47,7 @@ public class positiveTest {
     }
     @Test
     public void orderWithValidData() {
-        WebDriver driver = new ChromeDriver();
+        /*WebDriver driver = new ChromeDriver();*/
         ElementsForHomePage forOpenSite = new ElementsForHomePage(driver);
         ElementsForOrder elements = new ElementsForOrder(driver);
         forOpenSite.openHomePage(); //открываем сайт
@@ -51,9 +60,29 @@ public class positiveTest {
         elements.fillingSecondOrder(comment); //
         String actualOrder = elements.getTextOfConfirmationWindow(); //
         MatcherAssert.assertThat(actualOrder, startsWith(expectedOrder)); //
-        driver.quit();
-        System.out.println("Валидный тест");//
     }
 
+    @Test
+    public void orderWithValidDataDownButtonOrder() {
+        /*WebDriver driver = new ChromeDriver();*/
+        ElementsForHomePage forOpenSite = new ElementsForHomePage(driver);
+        ElementsForOrder elements = new ElementsForOrder(driver);
+        forOpenSite.openHomePage(); //
+        forOpenSite.clickCookieButton(); //
+        forOpenSite.scrollToImportantQuestions();//тут добавила скролл
+        forOpenSite.clickDownButtonOrder(); //тут меняла ссылку на элемент
+        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS); //
+        elements.fillingFirstOrder(name, lastName, address, phoneNumber); //
+        elements.clickButtonNextOrder(); //
+        driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS); //
+        elements.fillingSecondOrder(comment); //
+        String actualOrder = elements.getTextOfConfirmationWindow(); //
+        MatcherAssert.assertThat(actualOrder, startsWith(expectedOrder)); ////
+    }
+    @After
+    public void teardown() {
+        // Закрой браузер
+        driver.quit();
+    }
 
 }

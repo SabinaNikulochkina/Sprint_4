@@ -16,12 +16,15 @@ public class ElementsForHomePage {
     //кнопка "заказать" находится в верхней части
     private By topButtonOrder = By.className("Button_Button__ra12g");
     //кнопка "заказать" снизу
-    private By downButtonOrder = By.className("Button_Button__ra12g Button_Middle__1CSJM");
+    private By downButtonOrder = By.xpath(".//div[@class='Home_FinishButton__1_cWm']/button");
 
     public String linkHomePage = "https://qa-scooter.praktikum-services.ru/";
 
     //локатор для скролла
     public By scrollQuestions =  By.id("accordion__heading-0");
+
+    //еще один локатор для скрола, чтобы найти кнопку заказа где-то на странице
+    public By scrollQuestionsButton =  By.className("Home_FinishButton__1_cWm");
 
     //локатор для кнопки "да все привыкли"
     public By cookieButton = By.id("rcc-confirm-button");
@@ -94,6 +97,15 @@ public class ElementsForHomePage {
         WebElement element = driver.findElement(scrollQuestions);
         ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", element);}
     public void standBy(By element){ //Ожидание
+        WebElement dynamicElement = (new WebDriverWait(driver, 10))
+                .until(ExpectedConditions.presenceOfElementLocated(element));
+    }
+
+    //метод скролл, для кнопки заказать
+    public void scrollToImportantQuestionsButton(){
+        WebElement element = driver.findElement(scrollQuestionsButton);
+        ((JavascriptExecutor)driver).executeScript("arguments[0].scrollIntoView();", element);}
+    public void standByButton(By element){ //Ожидание
         WebElement dynamicElement = (new WebDriverWait(driver, 10))
                 .until(ExpectedConditions.presenceOfElementLocated(element));
     }

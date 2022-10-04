@@ -5,6 +5,9 @@ import org.hamcrest.MatcherAssert;
 import static org.hamcrest.CoreMatchers.startsWith;
 import org.junit.runners.Parameterized;
 import org.junit.runner.RunWith;
+import org.junit.After;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.Before;
 
 import java.util.concurrent.TimeUnit;
 
@@ -12,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class negativeTest {
+
     private static String name;
     private static String lastName;
     private static String address;
@@ -28,18 +32,24 @@ public class negativeTest {
         this.comment = comment;
     }
     private WebDriver driver;
-
+    @Before
+    public void setUp() {
+        /*WebDriverManager.chromedriver().setup();*/
+        driver = new ChromeDriver();
+    }
     @Parameterized.Parameters
     public static Object[][] getCredentials() {
         return new Object[][]{
                 {"Sabina", "Никулочкина", "Москва, Шоссейная, 5", "79998881122", "Побыстрее", "Введите корректное имя"},
                 {"Сабина", "Nikulochkina", "Москва, Шоссейная, 5", "79998881122", "", "Введите корректную фамилию"},
+                {"Сабина", "Никулочкина", "3325", "79998881122", "", "Введите корректный адрес"},
+                {"Сабина", "Никулочкина", "Москва, Шоссейная, 5", " ", "", "Введите корректный номер"},
         };
     }
 
     @Test
     public void orderWithNoValidData() {
-        WebDriver driver = new ChromeDriver();
+        /*WebDriver driver = new ChromeDriver();*/
         ElementsForHomePage forOpenSite = new ElementsForHomePage(driver);
         ElementsForOrder elements = new ElementsForOrder(driver);
         forOpenSite.openHomePage(); //
@@ -51,8 +61,12 @@ public class negativeTest {
         driver.manage().timeouts().implicitlyWait(3, TimeUnit.SECONDS); //
         String actualOrder2 = elements.getTextError(); //
         MatcherAssert.assertThat(actualOrder2, startsWith(expectedOrder)); //
+    }
+
+    @After
+    public void teardown() {
+        // Закрой браузер
         driver.quit();
-        System.out.println("Не валидный тест");
     }
 
 }
